@@ -1,13 +1,10 @@
-# 🎵 Music Search App 🎧
-
----
 
 ## 🚀 Instalación Rápida
 
 ```bash
 # Clona el repositorio
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
+git clone https://github.com/noemvy/lyrics-api
+cd lyrics-api
 
 # Instala las dependencias
 npm install
