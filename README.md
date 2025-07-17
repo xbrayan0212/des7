@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clona el repositorio
+git clone https://github.com/noemvy/lyrics-api
+cd lyrics-api
 
-## Getting Started
+# Instala las dependencias
+npm install
 
-First, run the development server:
+# Crea el archivo de variables de entorno
+touch .env.local
 
-```bash
+# Abre el archivo .env.local y agrega tu conexión a MongoDB
+echo "MONGODB_URI=tu-cadena-de-conexion" > .env.local
+
+# Corre el proyecto en modo desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# -------------------------
+# Estructura del proyecto 📂
+# -------------------------
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Rutas y archivos principales
+/app
+├── /search/page.tsx               # Página para buscar canciones, letras y ver resultados
+├── /favorites/page.tsx            # Página para ver, eliminar favoritos
+├── layout.tsx                     # Layout general
+└── page.tsx                       # Redirección a /search
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/models
+└── Favorite.ts                    # Modelo Favorite (title, artist, cover)
 
-## Learn More
+/middlewares
+└── dbConnect.ts                   # Conexión MongoDB
 
-To learn more about Next.js, take a look at the following resources:
+/pages/api
+├── itunes.ts                      # API iTunes
+└── /favorites
+    ├── [id].ts                    # DELETE por ID
+    ├── index.ts                   # GET, POST favoritos
+    └── check.ts                   # Verifica si ya está en favoritos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+/public
+└── /...                            # Archivos públicos opcionales
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+/services
+├── fetchLyrics.ts                 # API Lyrics.ovh
+├── fetchItunes.ts                 # API iTunes
+└── favoritesAPI.ts                # API favoritos
 
-## Deploy on Vercel
+/types
+└── Track.ts                       # Tipado TypeScript
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+/styles
+└── globals.css                    # Tailwind CSS
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Configuración y dependencias
+next.config.js                     # Configuración Next.js
+tsconfig.json                      # Configuración TypeScript
+package.json                       # Dependencias
+
+# -------------------------
+# Indicaciones Finales ✅
+# -------------------------
+
+# 1️⃣ Haz el login y agregalo como ruta y su pag.tsx.
+# 2️⃣ Crea la conexión a la base de datos (.env.local)
+# 3️⃣ Corre npm run dev y verifica que funcione correctamente.
+
+# -------------------------
