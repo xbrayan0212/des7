@@ -1,68 +1,63 @@
+# 🎵 Music Search App 🎧
+
+---
+
+## 🚀 Instalación Rápida
+
+```bash
 # Clona el repositorio
-git clone https://github.com/noemvy/lyrics-api
-cd lyrics-api
+git clone https://github.com/tu-usuario/tu-repo.git
+cd tu-repo
 
 # Instala las dependencias
 npm install
 
-# Crea el archivo de variables de entorno
-touch .env.local
-
-# Abre el archivo .env.local y agrega tu conexión a MongoDB
+# Crea tu archivo de entorno para la conexión a MongoDB
 echo "MONGODB_URI=tu-cadena-de-conexion" > .env.local
 
 # Corre el proyecto en modo desarrollo
 npm run dev
 
-# -------------------------
-# Estructura del proyecto 📂
-# -------------------------
-
-# Rutas y archivos principales
 /app
-├── /search/page.tsx               # Página para buscar canciones, letras y ver resultados
-├── /favorites/page.tsx            # Página para ver, eliminar favoritos
-├── layout.tsx                     # Layout general
-└── page.tsx                       # Redirección a /search
+├── /search/page.tsx         # Buscar canciones, letras y ver resultados
+├── /favorites/page.tsx      # Ver y eliminar favoritos
+├── layout.tsx               # Layout general
+└── page.tsx                 # Redirección a /search
 
 /models
-└── Favorite.ts                    # Modelo Favorite (title, artist, cover)
+└── Favorite.ts              # Esquema Favorite (title, artist, cover)
 
 /middlewares
-└── dbConnect.ts                   # Conexión MongoDB
+└── dbConnect.ts             # Conexión a MongoDB
 
 /pages/api
-├── itunes.ts                      # API iTunes
+├── itunes.ts                # API de iTunes
 └── /favorites
-    ├── [id].ts                    # DELETE por ID
-    ├── index.ts                   # GET, POST favoritos
-    └── check.ts                   # Verifica si ya está en favoritos
+    ├── [id].ts              # DELETE por ID
+    ├── index.ts             # GET y POST favoritos
+    └── check.ts             # Verifica si ya está en favoritos
 
 /public
-└── /...                            # Archivos públicos opcionales
+└── ...                      # Archivos públicos opcionales
 
 /services
-├── fetchLyrics.ts                 # API Lyrics.ovh
-├── fetchItunes.ts                 # API iTunes
-└── favoritesAPI.ts                # API favoritos
+├── fetchLyrics.ts           # API Lyrics.ovh
+├── fetchApi.ts              # API iTunes
+└── favoritesAPI.ts          # API Favoritos
 
 /types
-└── Track.ts                       # Tipado TypeScript
+└── Track.ts                 # Tipado TypeScript para Track
 
 /styles
-└── globals.css                    # Tailwind CSS
+└── globals.css              # Estilos con Tailwind CSS
 
-# Configuración y dependencias
-next.config.js                     # Configuración Next.js
-tsconfig.json                      # Configuración TypeScript
-package.json                       # Dependencias
+next.config.js               # Configuración Next.js (dominios externos imágenes)
+tsconfig.json                # Configuración TypeScript
+package.json                 # Dependencias del proyecto
 
-# -------------------------
-# Indicaciones Finales ✅
-# -------------------------
 
-# 1️⃣ Haz el login y agregalo como ruta y su pag.tsx.
-# 2️⃣ Crea la conexión a la base de datos (.env.local)
-# 3️⃣ Corre npm run dev y verifica que funcione correctamente.
+MONGODB_URI=tu-cadena-de-conexion
 
-# -------------------------
+✅ Instrucciones Finales
+1️⃣ Realiza login y agregalo como ruta 
+3️⃣ Verifica que redirija correctamente a /search.
