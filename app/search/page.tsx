@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchLyrics } from "@/services/fetchLyrics";
 import { searchItunes } from "@/services/fetchItunes";
 import { Track } from "@/types/Tracks";
 import Image from "next/image";
+import TopTracks from '../components/TopTracks';
 
 export default function SearchPage() {
   const [artist, setArtist] = useState("");
@@ -14,12 +15,15 @@ export default function SearchPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleSearch = async () => {
-    if (!artist || !title) {
-      setErrorMessage("Por favor, completa ambos campos.");
-      return;
+  // Cuando artist o title cambian y no están vacíos, buscar
+  useEffect(() => {
+    if (artist && title) {
+      handleSearch(artist, title);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artist, title]);
 
+  const handleSearch = async (artistParam: string, titleParam: string) => {
     setIsLoading(true);
     setLyrics("");
     setTrack(null);
@@ -27,8 +31,8 @@ export default function SearchPage() {
     setIsFavorite(false);
 
     try {
-      const fetchedLyrics = await fetchLyrics(artist, title);
-      const fetchedTrack = await searchItunes(artist, title);
+      const fetchedLyrics = await fetchLyrics(artistParam, titleParam);
+      const fetchedTrack = await searchItunes(artistParam, titleParam);
 
       if (!fetchedTrack && (!fetchedLyrics || fetchedLyrics === "⚠️ Letra no encontrada.")) {
         setErrorMessage("No se encontró información. Verifica el nombre del artista y la canción.");
@@ -36,10 +40,9 @@ export default function SearchPage() {
         setTrack(fetchedTrack);
         setLyrics(fetchedLyrics || "");
 
-        // Verificar si ya está en favoritos
         try {
           const res = await fetch(
-            `/api/favorites/check?artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`
+            `/api/favorites/check?artist=${encodeURIComponent(artistParam)}&title=${encodeURIComponent(titleParam)}`
           );
           if (res.ok) {
             const data = await res.json();
@@ -51,9 +54,9 @@ export default function SearchPage() {
           setIsFavorite(false);
         }
 
-        // Limpiar inputs después de búsqueda exitosa
-        setArtist("");
-        setTitle("");
+        // Opcional: si quieres limpiar inputs, descomenta:
+        // setArtist("");
+        // setTitle("");
       }
     } catch (error) {
       console.error(error);
@@ -94,82 +97,98 @@ export default function SearchPage() {
   };
 
   return (
-    <main className="p-6 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Buscar Canción</h1>
+    <main className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-10 mb-20">
+      <h1 className="text-3xl font-bold text-indigo-700 mb-6 text-center">Buscar Canción</h1>
 
-      <input
-        value={artist}
-        onChange={(e) => setArtist(e.target.value)}
-        placeholder="Artista"
-        className="border p-2 w-full mb-2"
-        disabled={isLoading}
-      />
-
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Título"
-        className="border p-2 w-full mb-2"
-        disabled={isLoading}
-      />
-
-      <div className="flex gap-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (artist && title) handleSearch(artist, title);
+        }}
+        className="flex flex-col sm:flex-row gap-4 mb-6"
+      >
+        <input
+          value={artist}
+          onChange={(e) => setArtist(e.target.value)}
+          placeholder="Artista"
+          className="border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1"
+          disabled={isLoading}
+        />
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Título"
+          className="border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1"
+          disabled={isLoading}
+        />
         <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white px-4 py-2 rounded flex-1"
+          type="submit"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-6 py-3 transition disabled:bg-indigo-300"
           disabled={isLoading}
         >
-          Buscar
+          {isLoading ? "Buscando..." : "Buscar"}
         </button>
+      </form>
 
-        {track && lyrics && (
-          <button
-            onClick={handleSave}
-            disabled={isFavorite || isLoading}
-            className={`px-4 py-2 rounded flex-1 ${
-              isFavorite ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 text-white"
-            }`}
-          >
-            {isFavorite ? "Ya está en Favoritos" : "Guardar en Favoritos"}
-          </button>
-        )}
-      </div>
+      {errorMessage && (
+        <p className="text-center text-red-600 mb-6 font-medium">{errorMessage}</p>
+      )}
 
-      {isLoading && (
-        <div className="animate-pulse mt-6">
-          <div className="h-6 bg-gray-300 rounded mb-4 w-1/2"></div>
-          <div className="h-4 bg-gray-300 rounded mb-2"></div>
-          <div className="h-4 bg-gray-300 rounded mb-2"></div>
-          <div className="h-4 bg-gray-300 rounded mb-2"></div>
+      {track && lyrics && (
+        <section className="mb-8">
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            {track.albumCover && (
+              <Image
+                src={track.albumCover}
+                alt={`${track.title} cover`}
+                width={200}
+                height={200}
+                className="rounded-lg shadow-md"
+              />
+            )}
+            <div className="flex-1">
+              <h2 className="text-2xl font-semibold text-indigo-700 mb-2">
+                {track.title} - {track.artist}
+              </h2>
+              {track.previewUrl && (
+                <audio controls src={track.previewUrl} className="w-full rounded-md">
+                  Tu navegador no soporta reproducción de audio.
+                </audio>
+              )}
+              <button
+                onClick={handleSave}
+                disabled={isFavorite}
+                className={`mt-4 px-5 py-3 rounded-md text-white font-semibold transition ${
+                  isFavorite
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                }`}
+              >
+                {isFavorite ? "Ya está en Favoritos" : "Guardar en Favoritos"}
+              </button>
+            </div>
+          </div>
+          <div className="mt-6 bg-gray-50 p-6 rounded-lg whitespace-pre-wrap text-gray-700 shadow-inner max-h-[400px] overflow-y-auto font-mono">
+            {lyrics}
+          </div>
+        </section>
+      )}
+
+      {isLoading && !lyrics && (
+        <div className="mt-10 space-y-4 animate-pulse">
+          <div className="h-8 bg-gray-300 rounded w-3/4 mx-auto"></div>
+          <div className="h-4 bg-gray-300 rounded w-full mx-auto"></div>
+          <div className="h-4 bg-gray-300 rounded w-full mx-auto"></div>
+          <div className="h-4 bg-gray-300 rounded w-5/6 mx-auto"></div>
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500 mt-6">{errorMessage}</p>}
-
-      {!isLoading && !errorMessage && track && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">
-            {track.title} - {track.artist}
-          </h2>
-          {track.albumCover && (
-            <Image
-              src={track.albumCover}
-              alt="Album cover"
-              width={200}
-              height={200}
-              className="my-2 rounded"
-            />
-          )}
-          <audio controls src={track.previewUrl} className="w-full"></audio>
-        </div>
-      )}
-
-      {!isLoading && !errorMessage && lyrics && (
-        <>
-          <h2 className="text-lg mt-4 font-bold">Letra:</h2>
-          <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{lyrics}</pre>
-        </>
-      )}
+      <TopTracks
+        onTrackSelect={(selectedArtist, selectedTitle) => {
+          setArtist(selectedArtist);
+          setTitle(selectedTitle);
+        }}
+      />
     </main>
   );
 }
