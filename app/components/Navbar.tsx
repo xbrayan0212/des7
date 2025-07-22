@@ -16,6 +16,8 @@ export default function Navbar() {
     router.push('/login')
   }
 
+  const firstName = user?.username ? user.username.split(' ')[0] : 'invitado'
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -47,7 +49,7 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <span className="text-gray-700 font-semibold">¡Hola, {user.name.split(' ')[0]}!</span>
+              <span className="text-gray-700 font-semibold">¡Hola, {firstName}!</span>
               <button
                 onClick={handleLogout}
                 className="ml-4 px-4 py-2 bg-red-500 text-white rounded-md font-semibold shadow-md hover:bg-red-600 transition"
@@ -104,7 +106,7 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <span className="block text-gray-700 font-semibold">¡Hola, {user.name.split(' ')[0]}!</span>
+              <span className="block text-gray-700 font-semibold">¡Hola, {firstName}!</span>
               <button
                 onClick={() => {
                   setMenuOpen(false)

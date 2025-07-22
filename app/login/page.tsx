@@ -11,17 +11,27 @@ export default function LoginPage() {
   const router = useRouter()
   const { setUser } = useContext(UserContext)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+const handleSubmit = async (e) => {
+  e.preventDefault()
 
-    if (email && password) {
-      // Guardar usuario en contexto y localStorage (se hace en el contexto)
-      setUser({ name: email.split('@')[0], email })
-      router.push('/search')
-    } else {
-      alert('Correo o contraseña inválidos')
-    }
+  if (!email || !password) {
+    alert('Correo o contraseña inválidos')
+    return
   }
+
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: email, password }),
+  })
+
+  if (res.ok) {
+    setUser({ name: email.split('@')[0], email })
+    router.push('/search')
+  } else {
+    alert('Credenciales inválidas')
+  }
+}
 
   return (
     <main className="max-w-md mx-auto mt-16 p-8 bg-white rounded-2xl shadow-lg ring-1 ring-gray-200">
